@@ -1,1 +1,1 @@
-# Face-Recognition-for-Attendance-System
+# Face Recognition for Attendance System
