@@ -30,7 +30,7 @@ class Table(QtWidgets.QWidget):
         self.show()
 
     def create_table_widget(self):
-        # Function for creating table a table widget
+        # Function for creating a table widget
         connection = sqlite3.connect("/home/hassi_ahk/Project/Attendance_System.db")
 
         cursor = connection.cursor()
