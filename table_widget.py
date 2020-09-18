@@ -6,30 +6,30 @@ from PyQt5 import QtWidgets
 class Table(QtWidgets.QWidget):
     def __init__(self):
         super().__init__()
+        self.layout = QtWidgets.QVBoxLayout()
         self.tableWidget = QtWidgets.QTableWidget()
         self.title = 'Attendance for all Students'
         self.left = 400
         self.top = 150
         self.width = 600
         self.height = 300
-        self.initUI()
+        self.init_ui()
 
-    def initUI(self):
+    def init_ui(self):
         # Function for showing the widget
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
 
-        self.createTable()
+        self.create_table_widget()
 
         # Add box layout, add table to box layout and add box layout to widget
-        self.layout = QtWidgets.QVBoxLayout()
         self.layout.addWidget(self.tableWidget)
         self.setLayout(self.layout)
 
         # Show widget
         self.show()
 
-    def create_table(self):
+    def create_table_widget(self):
         # Function for creating table a table widget
         connection = sqlite3.connect("/home/hassi_ahk/Project/Attendance_System.db")
 
@@ -58,22 +58,22 @@ class Table(QtWidgets.QWidget):
 
         self.tableWidget.setHorizontalHeaderLabels(header_labels)
 
-        count = 0
+        column = 0
 
         # Inserting the values into the table widget
-        for row_number, roll in enumerate(distinct_rolls):
-            self.tableWidget.insertRow(row_number)
-            self.tableWidget.setItem(row_number, count, QtWidgets.QTableWidgetItem(str(roll)))
+        for row, roll in enumerate(distinct_rolls):
+            self.tableWidget.insertRow(row)
+            self.tableWidget.setItem(row, column, QtWidgets.QTableWidgetItem(str(roll)))
 
-        for i in distinct_dates:
+        for date in distinct_dates:
             attend = []
-            count += 1
-            for j in distinct_rolls:
-                cursor.execute("select attendance from attendance where roll = ? and date = ?", (j, i))
+            column += 1
+            for roll_number in distinct_rolls:
+                cursor.execute("select attendance from attendance where roll = ? and date = ?", (roll_number, date))
                 attend.append(cursor.fetchall()[0][0])
 
-            for row_number, att in enumerate(attend):
-                self.tableWidget.setItem(row_number, count, QtWidgets.QTableWidgetItem(str(att)))
+            for row, att in enumerate(attend):
+                self.tableWidget.setItem(row, column, QtWidgets.QTableWidgetItem(str(att)))
 
 
 if __name__ == '__main__':
