@@ -131,11 +131,18 @@ class Registration(QtWidgets.QMainWindow):
                 face_locations = face_recognition.face_locations(rgb_frame, model='cnn')
 
                 for (top, right, bottom, left) in face_locations:
-                    cv2.imwrite(os.path.join(os.path.join(path, str(self.e2.text())),
-                                             str(self.e1.text()) + '_' + str(self.e2.text()) + '_' + str(
-                                                 frame_number) + '.jpg'),
-                                frame[top - 10: bottom + 10, left - 6: right + 6],
-                                [int(cv2.IMWRITE_JPEG_QUALITY), 1000000])
+                    cv2.imwrite(
+                        os.path.join(
+                            os.path.join(path, str(self.e2.text())),
+                            (
+                                f'{str(self.e1.text())}_{str(self.e2.text())}_{frame_number}'
+                                + '.jpg'
+                            ),
+                        ),
+                        frame[top - 10 : bottom + 10, left - 6 : right + 6],
+                        [int(cv2.IMWRITE_JPEG_QUALITY), 1000000],
+                    )
+
 
                     cv2.rectangle(frame, (left, top), (right, bottom), (0, 0, 255), 2)
                     cv2.waitKey(200)
@@ -148,9 +155,17 @@ class Registration(QtWidgets.QMainWindow):
 
             cap.release()
             cv2.destroyAllWindows()
-            self.pic.setPixmap(QtGui.QPixmap(os.path.join(os.path.join(path, str(self.e2.text())),
-                                                          str(self.e1.text()) + '_' + str(self.e2.text()) + '_' + str(
-                                                              frame_number) + '.jpg')))
+            self.pic.setPixmap(
+                QtGui.QPixmap(
+                    os.path.join(
+                        os.path.join(path, str(self.e2.text())),
+                        (
+                            f'{str(self.e1.text())}_{str(self.e2.text())}_{str(frame_number)}'
+                            + '.jpg'
+                        ),
+                    )
+                )
+            )
 
     def store_in_database(self):
         # Function for storing information in database
@@ -182,7 +197,7 @@ class Registration(QtWidgets.QMainWindow):
         # Function to check validations
         path = '/home/hassi_ahk/Project/Reg_Images'
         name = str(self.e1.text())
-        if (len(name) == 0):
+        if not name:
             return 1
 
         for i in range(10):

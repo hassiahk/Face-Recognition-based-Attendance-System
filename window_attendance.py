@@ -83,7 +83,7 @@ class Attendance(QtWidgets.QMainWindow):
             cap.set(cv2.CAP_PROP_POS_MSEC, (count * 1000))
 
             if ret:
-                cv2.imwrite(path + "/frame {}.jpg".format(count), frame)  # save frame as JPEG file
+                cv2.imwrite(path + f"/frame {count}.jpg", frame)
                 count += 1
             else:
                 break
@@ -104,18 +104,15 @@ class Attendance(QtWidgets.QMainWindow):
 
                 if len(face_bounding_boxes) != 1:
                     continue
-                else:
-                    # Appending the face encodings in to a List
-                    X.append(face_recognition.face_encodings(image, known_face_locations=face_bounding_boxes)[0])
-                    y.append(labels)
+                # Appending the face encodings in to a List
+                X.append(face_recognition.face_encodings(image, known_face_locations=face_bounding_boxes)[0])
+                y.append(labels)
 
         print("Extracted faces\n")
 
     def match(self):
         path = '/home/hassi_ahk/Project/Temp'
         face_names = []
-        present = {}
-
         print("Matching the extracted faces with known faces")
 
         for img_path in image_files_in_folder(path):
@@ -128,27 +125,21 @@ class Attendance(QtWidgets.QMainWindow):
 
                 name = None
 
-                if True in matches:
-                    match_index = matches.index(True)
-                    name = y[match_index]
-                else:
+                if True not in matches:
                     continue
 
+                match_index = matches.index(True)
+                name = y[match_index]
                 face_names.append(name)
 
-        for i in face_names:
-            present[i] = 'Present'
-
+        present = {i: 'Present' for i in face_names}
         connection = sqlite3.connect('/home/hassi_ahk/Project/Attendance_System.db')
         cursor = connection.cursor()
         cursor.execute("SELECT * from STUDENT")
 
-        roll_nos = []
         attendance = []
 
-        for each_row in cursor.fetchall():
-            roll_nos.append(each_row[1])
-
+        roll_nos = [each_row[1] for each_row in cursor.fetchall()]
         for i in roll_nos:
             if i in present:
                 attendance.append('P')
@@ -159,7 +150,7 @@ class Attendance(QtWidgets.QMainWindow):
         month = datetime.now().date().month
         year = datetime.now().date().year
 
-        date = str(day) + '-' + str(month) + '-' + str(year)
+        date = f'{str(day)}-{str(month)}-{str(year)}'
 
         cursor.execute(
             "CREATE TABLE IF NOT EXISTS attendance (roll TEXT NOT NULL, attendance TEXT NOT NULL, date TEXT NOT NULL)")

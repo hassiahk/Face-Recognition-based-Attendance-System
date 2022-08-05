@@ -40,19 +40,13 @@ class Table(QtWidgets.QWidget):
         cursor.execute("select distinct(roll) from attendance")
         temp2 = cursor.fetchall()
 
-        distinct_dates = []
-        distinct_rolls = []
-
-        for i in temp1:
-            distinct_dates.append(i[0])
+        distinct_dates = [i[0] for i in temp1]
         distinct_dates.sort(key=lambda x: x)
 
-        for j in temp2:
-            distinct_rolls.append(j[0])
+        distinct_rolls = [j[0] for j in temp2]
         distinct_rolls.sort(key=lambda x: x)
 
-        header_labels = ['Roll No']
-        header_labels.extend(distinct_dates)
+        header_labels = ['Roll No', *distinct_dates]
         self.tableWidget.setRowCount(0)
         self.tableWidget.setColumnCount(len(header_labels))
 
